@@ -1,16 +1,28 @@
 import React from 'react';
-import Bomb, { colors } from 'components/bomb';
+import { injectGlobal } from 'styled-components';
 
-// top: PropTypes.number.isRequired,
-// left: PropTypes.number.isRequired,
-// timer: PropTypes.number.isRequired,
-// color: PropTypes.string.isRequired,
+import Bomb, { colors } from 'components/bomb';
+import GameUi from 'components/game-ui';
+import Title from 'components/title';
 
 const BombasketBall = () => (
-  <div>
-    <h1>BombasketBall</h1>
-    <Bomb top="100px" left="100px" timer={7} color={colors.green} />
-  </div>
+  <React.Fragment>
+    <Title title="BombasketBall" />
+    <GameUi score={100} timer={42}>
+      <Bomb top="100px" left="100px" timer={7} color={colors.green} />
+    </GameUi>
+  </React.Fragment>
 );
+
+injectGlobal`
+  body {
+    padding: 0;
+    margin: 0;
+  }
+
+  h1 {
+    margin: 0;
+  }
+`;
 
 export default BombasketBall;
