@@ -8,9 +8,8 @@
     "paths": {
       "root/*": ["./*"],
       "src/*": ["src/*"],
-      "api/*": ["src/api/*"],
-      "modules/*": ["src/modules/*"],
-      "configs/*": ["src/configs/*"]
+      "components/*": ["src/components/*"],
+      "containers/*": ["src/containers/*"]
     }
   },
   "exclude": ["dist", "node_modules"]
