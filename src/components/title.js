@@ -2,20 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-const StyledH1 = styled.h1`
-  height: 7vh;
-  margin: 0px;
+const TitleStyle = styled.div`
+  font-weight: bolder;
+  font-size: 2em;
 `;
 
 const FlexCenter = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  height: 7vh;
+  margin: 0px;
 `;
 
 const Title = ({ title }) => (
   <FlexCenter>
-    <StyledH1>{title}</StyledH1>
+    <TitleStyle>{title}</TitleStyle>
   </FlexCenter>
 );
 
