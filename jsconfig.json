@@ -9,7 +9,9 @@
       "root/*": ["./*"],
       "src/*": ["src/*"],
       "components/*": ["src/components/*"],
-      "containers/*": ["src/containers/*"]
+      "containers/*": ["src/containers/*"],
+      "reducers/*": ["src/reducers/*"],
+      "actions/*": ["src/actions/*"]
     }
   },
   "exclude": ["dist", "node_modules"]
