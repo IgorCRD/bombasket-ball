@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import bombsField from 'reducers/bombs-field-reducer';
+import bombs from 'reducers/bombs-reducer';
 
 export default combineReducers({
-  bombsField,
+  bombs,
 });

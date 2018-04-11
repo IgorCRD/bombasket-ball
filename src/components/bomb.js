@@ -85,4 +85,9 @@ export const colors = {
   blue: 'rgb(34, 120, 207)',
 };
 
+export const healthPoints = {
+  minHp: 5,
+  maxHp: 10,
+};
+
 export default Bomb;

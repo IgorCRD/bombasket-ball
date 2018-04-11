@@ -13,14 +13,13 @@ class BombContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dragState: props.dragState,
+      dragState: dragStateOptions.INACTIVE,
       x_pos: props.x_pos,
       y_pos: props.y_pos,
     };
   }
 
   static propTypes = {
-    dragState: PropTypes.string.isRequired,
     x_pos: PropTypes.number.isRequired,
     y_pos: PropTypes.number.isRequired,
     timer: PropTypes.number.isRequired,
@@ -47,12 +46,6 @@ class BombContainer extends React.Component {
     return { x: x_res, y: y_res };
   };
 
-  state = {
-    dragState: dragStateOptions.INACTIVE,
-    x_pos: 0,
-    y_pos: 0,
-  };
-
   onDragStartHandler = event => {
     this.setState(() => ({
       dragState: dragStateOptions.BEING_DRAGGED,
@@ -64,17 +57,11 @@ class BombContainer extends React.Component {
   };
 
   onDragHandler = event => {
-    //eslint-disable-next-line
-    console.log('drag');
-
     if (event.clientX === 0 && event.clientY === 0) return;
 
     const twoRemInPixels = remInPixels(BombContainer.bombRadius);
     //browser window limits
-    let {
-      x: clientX,
-      y: clientY,
-    } = BombContainer.getContainerLimitedCoordinates(
+    let { x, y } = BombContainer.getContainerLimitedCoordinates(
       event.clientX,
       event.clientY,
       twoRemInPixels,
@@ -82,21 +69,14 @@ class BombContainer extends React.Component {
       document.body,
     );
 
-    this.shadow.style.top = `calc(${clientY}px - ${
-      BombContainer.bombRadius
-    }rem)`;
-    this.shadow.style.left = `calc(${clientX}px - ${
-      BombContainer.bombRadius
-    }rem)`;
+    this.shadow.style.top = `calc(${y}px - ${BombContainer.bombRadius}rem)`;
+    this.shadow.style.left = `calc(${x}px - ${BombContainer.bombRadius}rem)`;
   };
 
   onDragEndHandler = event => {
     const twoRemInPixels = remInPixels(BombContainer.bombRadius);
     //browser window limits
-    const {
-      x: clientX,
-      y: clientY,
-    } = BombContainer.getContainerLimitedCoordinates(
+    const { x, y } = BombContainer.getContainerLimitedCoordinates(
       event.clientX,
       event.clientY,
       twoRemInPixels,
@@ -104,20 +84,10 @@ class BombContainer extends React.Component {
       document.body,
     );
 
-    //eslint-disable-next-line
-    console.log(
-      JSON.stringify({
-        eClientX: event.clientX,
-        eClientY: event.clientY,
-        clientX,
-        clientY,
-      }),
-    );
-
     this.setState(() => ({
       dragState: dragStateOptions.INACTIVE,
-      x_pos: clientX,
-      y_pos: clientY,
+      x_pos: x,
+      y_pos: y,
     }));
 
     document.body.removeChild(this.shadow);

@@ -13,10 +13,8 @@
     "build": "webpack --mode production",
     "devbuild": "webpack --mode development",
     "lint": "yarn eslint ./src",
-    "integration":
-      "jest --passWithNoTests --runInBand --testPathPattern=.*\\.integ\\.\\(test\\|spec\\)\\.js\\(x\\)?",
-    "unit":
-      "jest --passWithNoTests --testPathPattern=.*\\.unit\\.\\(test\\|spec\\)\\.js\\(x\\)?",
+    "integration": "jest --passWithNoTests --runInBand --testPathPattern=.*\\.integ\\.\\(test\\|spec\\)\\.js\\(x\\)?",
+    "unit": "jest --passWithNoTests --testPathPattern=.*\\.unit\\.\\(test\\|spec\\)\\.js\\(x\\)?",
     "test": "yarn run integration && yarn run unit"
   },
   "jest": {
@@ -26,7 +24,9 @@
       "<rootDir>/dist",
       "<rootDir>/build"
     ],
-    "setupFiles": ["<rootDir>/tests-setup.js"],
+    "setupFiles": [
+      "<rootDir>/tests-setup.js"
+    ],
     "resolver": "jest-webpack-resolver"
   },
   "jestWebpackResolver": {
