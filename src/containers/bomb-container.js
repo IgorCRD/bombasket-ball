@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 import Bomb from 'components/bomb';
 import { remInPixels } from 'src/utils';
+import { subtractBombTimerByOne, updatePosition } from 'actions/bombs-actions';
 
 export const dragStateOptions = {
   INACTIVE: 'INACTIVE',
@@ -10,20 +13,14 @@ export const dragStateOptions = {
 };
 
 class BombContainer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      dragState: dragStateOptions.INACTIVE,
-      x_pos: props.x_pos,
-      y_pos: props.y_pos,
-    };
-  }
-
   static propTypes = {
     x_pos: PropTypes.number.isRequired,
     y_pos: PropTypes.number.isRequired,
     timer: PropTypes.number.isRequired,
     color: PropTypes.string.isRequired,
+    subtractBombTimerByOne: PropTypes.func.isRequired,
+    setNewPosition: PropTypes.func.isRequired,
+    id: PropTypes.string.isRequired,
   };
 
   static bombRadius = 2;
@@ -44,6 +41,10 @@ class BombContainer extends React.Component {
       y_res = container.clientHeight - yPadding;
 
     return { x: x_res, y: y_res };
+  };
+
+  state = {
+    dragState: dragStateOptions.INACTIVE,
   };
 
   onDragStartHandler = event => {
@@ -86,16 +87,33 @@ class BombContainer extends React.Component {
 
     this.setState(() => ({
       dragState: dragStateOptions.INACTIVE,
-      x_pos: x,
-      y_pos: y,
     }));
+
+    const { id, setNewPosition } = this.props;
+    setNewPosition(id, x, y);
 
     document.body.removeChild(this.shadow);
   };
 
+  subtractTimerTimeoutCallback = () => {
+    const { id, timer, subtractBombTimerByOne } = this.props;
+
+    if (timer > 0) {
+      subtractBombTimerByOne(id);
+      this.subtractTimeout = setTimeout(
+        this.subtractTimerTimeoutCallback,
+        1000,
+      );
+    }
+  };
+
+  componentDidMount() {
+    this.subtractTimeout = setTimeout(this.subtractTimerTimeoutCallback, 1000);
+  }
+
   render() {
-    const { timer, color } = this.props;
-    const { dragState, x_pos, y_pos } = this.state;
+    const { timer, color, x_pos, y_pos } = this.props;
+    const { dragState } = this.state;
 
     const twoRemInPixels = remInPixels(BombContainer.bombRadius);
     //browser window limits
@@ -123,4 +141,16 @@ class BombContainer extends React.Component {
   }
 }
 
-export default BombContainer;
+const mapsStateToProps = ({ bombs }, props) => bombs.bombs[props.id];
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators(
+    {
+      subtractBombTimerByOne,
+      setNewPosition: updatePosition,
+    },
+    dispatch,
+  );
+};
+
+export default connect(mapsStateToProps, mapDispatchToProps)(BombContainer);

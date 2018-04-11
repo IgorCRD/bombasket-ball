@@ -17,30 +17,30 @@ class BombSpawner extends React.Component {
     numberOfBombsDeployed: 0,
   };
 
+  addBombTimeoutCallback = () => {
+    const { numberOfBombsToSpawn, addRandomBombBetween } = this.props;
+    const { numberOfBombsDeployed } = this.state;
+
+    if (numberOfBombsDeployed >= numberOfBombsToSpawn) {
+      return;
+    }
+
+    addRandomBombBetween(
+      0,
+      document.body.clientWidth,
+      0,
+      document.body.clientHeight,
+    );
+    this.setState(prevState => ({
+      numberOfBombsDeployed: prevState.numberOfBombsDeployed + 1,
+    }));
+
+    const time = calculateNextInterval(numberOfBombsDeployed);
+    this.addBombTimeout = setTimeout(this.addBombTimeoutCallback, time);
+  };
+
   componentDidMount() {
-    const { addRandomBombBetween, numberOfBombsToSpawn } = this.props;
-
-    const timeOutCallback = () => {
-      const { numberOfBombsDeployed } = this.state;
-      if (numberOfBombsDeployed >= numberOfBombsToSpawn) {
-        return;
-      }
-
-      addRandomBombBetween(
-        0,
-        document.body.clientWidth,
-        0,
-        document.body.clientHeight,
-      );
-      this.setState(prevState => ({
-        numberOfBombsDeployed: prevState.numberOfBombsDeployed + 1,
-      }));
-
-      const time = calculateNextInterval(numberOfBombsDeployed);
-      this.addBombTimeout = setTimeout(timeOutCallback, time);
-    };
-
-    this.addBombTimeout = setTimeout(timeOutCallback);
+    this.addBombTimeout = setTimeout(this.addBombTimeoutCallback, 0);
   }
 
   render() {
@@ -53,7 +53,8 @@ class BombSpawner extends React.Component {
       <React.Fragment>
         {bombs.map(bomb => (
           <BombContainer
-            key={bomb.key}
+            key={bomb.id}
+            id={bomb.id}
             x_pos={bomb.x_pos}
             y_pos={bomb.y_pos}
             timer={bomb.timer}
