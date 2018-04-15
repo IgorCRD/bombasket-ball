@@ -5,7 +5,11 @@ import { connect } from 'react-redux';
 
 import Bomb from 'components/bomb';
 import { remInPixels } from 'src/utils';
-import { subtractBombTimerByOne, updatePosition } from 'actions/bombs-actions';
+import {
+  subtractBombTimerByOne,
+  updatePosition,
+  deleteBomb,
+} from 'actions/bombs-actions';
 
 export const dragStateOptions = {
   INACTIVE: 'INACTIVE',
@@ -14,13 +18,14 @@ export const dragStateOptions = {
 
 class BombContainer extends React.Component {
   static propTypes = {
+    id: PropTypes.string.isRequired,
     x_pos: PropTypes.number.isRequired,
     y_pos: PropTypes.number.isRequired,
     timer: PropTypes.number.isRequired,
     color: PropTypes.string.isRequired,
-    subtractBombTimerByOne: PropTypes.func.isRequired,
+    deleteBomb: PropTypes.func.isRequired,
     setNewPosition: PropTypes.func.isRequired,
-    id: PropTypes.string.isRequired,
+    subtractBombTimerByOne: PropTypes.func.isRequired,
   };
 
   static bombRadius = 2;
@@ -70,8 +75,10 @@ class BombContainer extends React.Component {
       document.body,
     );
 
-    this.shadow.style.top = `calc(${y}px - ${BombContainer.bombRadius}rem)`;
-    this.shadow.style.left = `calc(${x}px - ${BombContainer.bombRadius}rem)`;
+    if (this.shadow) {
+      this.shadow.style.top = `calc(${y}px - ${BombContainer.bombRadius}rem)`;
+      this.shadow.style.left = `calc(${x}px - ${BombContainer.bombRadius}rem)`;
+    }
   };
 
   onDragEndHandler = event => {
@@ -92,11 +99,34 @@ class BombContainer extends React.Component {
     const { id, setNewPosition } = this.props;
     setNewPosition(id, x, y);
 
-    document.body.removeChild(this.shadow);
+    if (this.shadow) {
+      document.body.removeChild(this.shadow);
+      this.shadow = null;
+    }
   };
 
+  updateShadow = timer => {
+    if (!this.shadow) return;
+
+    if (timer === 0) {
+      document.body.removeChild(this.shadow);
+      this.shadow = null;
+    } else {
+      this.shadow.firstChild.innerHTML = timer;
+    }
+  };
+
+  componentDidUpdate(prevProps) {
+    const { timer: prevTimer } = prevProps;
+    const { timer } = this.props;
+
+    if (timer === prevTimer) return;
+
+    this.updateShadow(timer);
+  }
+
   subtractTimerTimeoutCallback = () => {
-    const { id, timer, subtractBombTimerByOne } = this.props;
+    const { id, timer, subtractBombTimerByOne, deleteBomb } = this.props;
 
     if (timer > 0) {
       subtractBombTimerByOne(id);
@@ -104,6 +134,8 @@ class BombContainer extends React.Component {
         this.subtractTimerTimeoutCallback,
         1000,
       );
+    } else {
+      deleteBomb(id);
     }
   };
 
@@ -141,11 +173,12 @@ class BombContainer extends React.Component {
   }
 }
 
-const mapsStateToProps = ({ bombs }, props) => bombs.bombs[props.id];
+const mapsStateToProps = ({ bombs: { bombs } }, props) => bombs[props.id];
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
+      deleteBomb,
       subtractBombTimerByOne,
       setNewPosition: updatePosition,
     },
