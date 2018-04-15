@@ -3,29 +3,32 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { dragStateOptions } from 'containers/bomb-container';
 
-const BombShell = styled.div`
-  width: ${props => props.radius * 2}rem;
-  height: ${props => props.radius * 2}rem;
-  opacity: ${props =>
-    props.dragState === dragStateOptions.BEING_DRAGGED ? 0 : 1};
-  z-index: ${props =>
-    props.dragState === dragStateOptions.BEING_DRAGGED ? 999 : 0};
-
+// using attrs on dynamic rules to avoid excessive css class generation
+const BombShell = styled.div.attrs({
+  style: props => ({
+    width: `${props.radius * 2}rem`,
+    height: `${props.radius * 2}rem`,
+    opacity: props.dragState === dragStateOptions.BEING_DRAGGED ? 0 : 1,
+    zIndex: props.dragState === dragStateOptions.BEING_DRAGGED ? 999 : 0,
+    top: `Calc(${props.y_pos} - ${props.radius}rem)`,
+    backgroundColor: `${props.color}`,
+    left: `Calc(${props.x_pos} - ${props.radius}rem)`,
+    display: `${props.timer > 0 ? 'flex' : 'none'}`,
+  }),
+})`
   position: absolute;
-  display: ${props => (props.timer > 0 ? 'flex' : 'none')};
   justify-content: flex-end;
   align-items: flex-start;
-
-  top: Calc(${props => props.y_pos} - ${props => props.radius}rem);
-  left: Calc(${props => props.x_pos} - ${props => props.radius}rem);
-  background-color: ${props => props.color};
 
   border-radius: 50%;
 `;
 
-const BombTimer = styled.div`
+const BombTimer = styled.div.attrs({
+  style: props => ({
+    display: `${props.timer > 0 ? 'flex' : 'none'}`,
+  }),
+})`
   position: relative;
-  display: ${props => (props.timer > 0 ? 'flex' : 'none')};
   justify-content: center;
   align-items: center;
 
