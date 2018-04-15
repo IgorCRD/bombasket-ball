@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import Bomb from 'components/bomb';
 import { remInPixels } from 'src/utils';
 import {
-  subtractBombTimerByOne,
+  decreaseBombTimer,
   updatePosition,
   deleteBomb,
 } from 'actions/bombs-actions';
+import { decreaseScore } from 'actions/game-actions';
 
 export const dragStateOptions = {
   INACTIVE: 'INACTIVE',
@@ -24,8 +24,9 @@ class BombContainer extends React.Component {
     timer: PropTypes.number.isRequired,
     color: PropTypes.string.isRequired,
     deleteBomb: PropTypes.func.isRequired,
+    decreaseScore: PropTypes.func.isRequired,
     setNewPosition: PropTypes.func.isRequired,
-    subtractBombTimerByOne: PropTypes.func.isRequired,
+    decreaseBombTimer: PropTypes.func.isRequired,
   };
 
   static bombRadius = 2;
@@ -125,22 +126,33 @@ class BombContainer extends React.Component {
     this.updateShadow(timer);
   }
 
-  subtractTimerTimeoutCallback = () => {
-    const { id, timer, subtractBombTimerByOne, deleteBomb } = this.props;
+  decreaseTimerTimeoutCallback = () => {
+    const {
+      id,
+      timer,
+      decreaseBombTimer,
+      deleteBomb,
+      decreaseScore,
+    } = this.props;
 
     if (timer > 0) {
-      subtractBombTimerByOne(id);
-      this.subtractTimeout = setTimeout(
-        this.subtractTimerTimeoutCallback,
+      decreaseBombTimer(id);
+      this.decraseTimerTimeout = setTimeout(
+        this.decreaseTimerTimeoutCallback,
         1000,
       );
-    } else {
+    }
+    if (timer === 1) {
+      decreaseScore();
       deleteBomb(id);
     }
   };
 
   componentDidMount() {
-    this.subtractTimeout = setTimeout(this.subtractTimerTimeoutCallback, 1000);
+    this.decraseTimerTimeout = setTimeout(
+      this.decreaseTimerTimeoutCallback,
+      1000,
+    );
   }
 
   render() {
@@ -175,15 +187,9 @@ class BombContainer extends React.Component {
 
 const mapsStateToProps = ({ bombs: { bombs } }, props) => bombs[props.id];
 
-const mapDispatchToProps = dispatch => {
-  return bindActionCreators(
-    {
-      deleteBomb,
-      subtractBombTimerByOne,
-      setNewPosition: updatePosition,
-    },
-    dispatch,
-  );
-};
-
-export default connect(mapsStateToProps, mapDispatchToProps)(BombContainer);
+export default connect(mapsStateToProps, {
+  deleteBomb,
+  decreaseBombTimer,
+  setNewPosition: updatePosition,
+  decreaseScore,
+})(BombContainer);

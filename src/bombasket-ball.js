@@ -4,7 +4,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 
 import BombSpawner from 'containers/bomb-spawner';
-import GameUi from 'components/game-ui';
+import GameUiContainer from 'containers/game-ui-container';
 import Title from 'components/title';
 import reducers from 'reducers';
 
@@ -34,9 +34,9 @@ class BombasketBall extends React.Component {
       <Provider store={store}>
         <React.Fragment>
           <Title title="BombasketBall" />
-          <GameUi score={100} timer={42}>
+          <GameUiContainer>
             <BombSpawner numberOfBombsToSpawn={120} />
-          </GameUi>
+          </GameUiContainer>
         </React.Fragment>
       </Provider>
     );

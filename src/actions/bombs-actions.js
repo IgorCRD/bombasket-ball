@@ -3,7 +3,7 @@ import { randomBetween } from 'src/utils';
 import uuidv4 from 'uuid/v4';
 
 export const ADD_BOMB = 'ADD_BOMB';
-export const SUBRACT_BOMB_TIMER = 'SUBRACT_BOMB_TIMER';
+export const DECREASE_BOMB_TIMER = 'DECREASE_BOMB_TIMER';
 export const UPDATE_POSITION = 'UPDATE_POSITION';
 export const DELETE_BOMB = 'DELETE_BOMB';
 
@@ -16,9 +16,9 @@ const addBombAction = (x_pos, y_pos, timer, color, id) => ({
   color,
 });
 
-export const subtractBombTimerByOne = id => {
+export const decreaseBombTimer = id => {
   return {
-    type: SUBRACT_BOMB_TIMER,
+    type: DECREASE_BOMB_TIMER,
     id,
   };
 };

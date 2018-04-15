@@ -1,11 +1,9 @@
 import {
   ADD_BOMB,
-  SUBRACT_BOMB_TIMER,
+  DECREASE_BOMB_TIMER,
   UPDATE_POSITION,
   DELETE_BOMB,
 } from 'actions/bombs-actions';
-
-const initialState = { bombs: {} };
 
 const insertBomb = (bombsMap, newBomb) => {
   const resBombsMap = { ...bombsMap };
@@ -15,12 +13,15 @@ const insertBomb = (bombsMap, newBomb) => {
   return resBombsMap;
 };
 
-const subtractBombTimer = (bombs, id) => {
-  const bombToSubtract = bombs[id];
+const decreaseBombTimer = (bombs, id) => {
+  const bombToDecreaseTimer = bombs[id];
   const bombsResult = {
     ...bombs,
   };
-  bombsResult[id] = { ...bombToSubtract, timer: bombToSubtract.timer - 1 };
+  bombsResult[id] = {
+    ...bombToDecreaseTimer,
+    timer: bombToDecreaseTimer.timer - 1,
+  };
   return bombsResult;
 };
 
@@ -38,6 +39,8 @@ const updateBombPosition = (bombs, id, x, y) => {
   return bombsResult;
 };
 
+const initialState = { bombs: {} };
+
 const bombsReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_BOMB:
@@ -51,10 +54,10 @@ const bombsReducer = (state = initialState, action) => {
           color: action.color,
         }),
       };
-    case SUBRACT_BOMB_TIMER:
+    case DECREASE_BOMB_TIMER:
       return {
         ...state,
-        bombs: subtractBombTimer(state.bombs, action.id),
+        bombs: decreaseBombTimer(state.bombs, action.id),
       };
     case UPDATE_POSITION:
       return {
