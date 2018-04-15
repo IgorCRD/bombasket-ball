@@ -2,6 +2,7 @@ import {
   ADD_BOMB,
   SUBRACT_BOMB_TIMER,
   UPDATE_POSITION,
+  DELETE_BOMB,
 } from 'actions/bombs-actions';
 
 const initialState = { bombs: {} };
@@ -21,6 +22,11 @@ const subtractBombTimer = (bombs, id) => {
   };
   bombsResult[id] = { ...bombToSubtract, timer: bombToSubtract.timer - 1 };
   return bombsResult;
+};
+
+const deleteBomb = (bombs, id) => {
+  const { [id]: deletedBomb, ...newBombs } = bombs;
+  return newBombs;
 };
 
 const updateBombPosition = (bombs, id, x, y) => {
@@ -54,6 +60,11 @@ const bombsReducer = (state = initialState, action) => {
       return {
         ...state,
         bombs: updateBombPosition(state.bombs, action.id, action.x, action.y),
+      };
+    case DELETE_BOMB:
+      return {
+        ...state,
+        bombs: deleteBomb(state.bombs, action.id),
       };
     default:
       return state;

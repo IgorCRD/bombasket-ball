@@ -5,6 +5,7 @@ import uuidv4 from 'uuid/v4';
 export const ADD_BOMB = 'ADD_BOMB';
 export const SUBRACT_BOMB_TIMER = 'SUBRACT_BOMB_TIMER';
 export const UPDATE_POSITION = 'UPDATE_POSITION';
+export const DELETE_BOMB = 'DELETE_BOMB';
 
 const addBombAction = (x_pos, y_pos, timer, color, id) => ({
   type: ADD_BOMB,
@@ -28,6 +29,13 @@ export const updatePosition = (id, x, y) => {
     id,
     x,
     y,
+  };
+};
+
+export const deleteBomb = id => {
+  return {
+    type: DELETE_BOMB,
+    id,
   };
 };
 
