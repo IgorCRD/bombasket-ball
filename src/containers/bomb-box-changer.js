@@ -23,6 +23,12 @@ class BombBoxChanger extends React.Component {
     setBoxOrder: PropTypes.func.isRequired,
   };
 
+  shouldComponentUpdate(nextProps) {
+    const { changeTimer } = nextProps;
+
+    return changeTimer === 0;
+  }
+
   componentDidUpdate(prevProps) {
     const { changeTimer, setBoxOrder, boxOrder } = this.props;
     const { changeTimer: prevChangeTimer } = prevProps;
@@ -35,24 +41,22 @@ class BombBoxChanger extends React.Component {
 
   render() {
     const [first, second, third] = this.props.boxOrder;
-    const colorKeys = Object.keys(colors);
-    const colorShadesKeys = Object.keys(colorShades);
 
     return (
       <BombBoxChangerStyle>
         <BombBoxContainer
-          color={colors[colorKeys[first]]}
-          colorShade={colorShades[colorShadesKeys[first]]}
+          color={colors.red}
+          colorShade={colorShades.red}
           order={first}
         />
         <BombBoxContainer
-          color={colors[colorKeys[second]]}
-          colorShade={colorShades[colorShadesKeys[second]]}
+          color={colors.green}
+          colorShade={colorShades.green}
           order={second}
         />
         <BombBoxContainer
-          color={colors[colorKeys[third]]}
-          colorShade={colorShades[colorShadesKeys[third]]}
+          color={colors.blue}
+          colorShade={colorShades.blue}
           order={third}
         />
       </BombBoxChangerStyle>
