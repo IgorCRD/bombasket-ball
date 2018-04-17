@@ -17,14 +17,14 @@ class GameUiContainer extends React.Component {
   descreaseChangeTimerTimeoutCallback = () => {
     const { decreaseTimer, resetTimer, changeTimer } = this.props;
     decreaseTimer();
-    if (changeTimer > 0) {
-      this.descreaseChangeTimerTimeout = setTimeout(
-        this.descreaseChangeTimerTimeoutCallback,
-        1000,
-      );
-    } else {
+    if (changeTimer === 0) {
       resetTimer();
     }
+
+    this.descreaseChangeTimerTimeout = setTimeout(
+      this.descreaseChangeTimerTimeoutCallback,
+      1000,
+    );
   };
 
   componentDidMount() {

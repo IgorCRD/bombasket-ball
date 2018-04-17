@@ -82,12 +82,6 @@ Bomb.propTypes = {
   dragState: PropTypes.string.isRequired,
 };
 
-export const colors = {
-  red: 'rgb(209, 49, 53)',
-  green: 'rgb(60, 141, 64)',
-  blue: 'rgb(34, 120, 207)',
-};
-
 export const healthPoints = {
   minHp: 5,
   maxHp: 10,

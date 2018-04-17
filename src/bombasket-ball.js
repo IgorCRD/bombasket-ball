@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import BombSpawner from 'containers/bomb-spawner';
 import GameUiContainer from 'containers/game-ui-container';
 import Title from 'components/title';
+import BombBoxChanger from 'containers/bomb-box-changer';
 import reducers from 'reducers';
 
 /* eslint-disable no-console */
@@ -35,7 +36,9 @@ class BombasketBall extends React.Component {
         <React.Fragment>
           <Title title="BombasketBall" />
           <GameUiContainer>
-            <BombSpawner numberOfBombsToSpawn={120} />
+            <BombSpawner numberOfBombsToSpawn={120}>
+              <BombBoxChanger />
+            </BombSpawner>
           </GameUiContainer>
         </React.Fragment>
       </Provider>

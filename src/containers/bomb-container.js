@@ -54,13 +54,19 @@ class BombContainer extends React.Component {
   };
 
   onDragStartHandler = event => {
+    const { id } = this.props;
+
     this.setState(() => ({
       dragState: dragStateOptions.BEING_DRAGGED,
     }));
 
     this.shadow = (event.target || event.srcElement).cloneNode(true);
-    this.shadow.style.opacity = '1';
+    this.shadow.style['pointer-events'] = 'none';
     document.body.appendChild(this.shadow);
+
+    event.stopPropagation();
+    event.dataTransfer.effectAllowed = 'copyMove';
+    event.dataTransfer.setData('Text', id);
   };
 
   onDragHandler = event => {
@@ -80,9 +86,12 @@ class BombContainer extends React.Component {
       this.shadow.style.top = `calc(${y}px - ${BombContainer.bombRadius}rem)`;
       this.shadow.style.left = `calc(${x}px - ${BombContainer.bombRadius}rem)`;
     }
+    event.stopPropagation();
   };
 
   onDragEndHandler = event => {
+    const { id, setNewPosition } = this.props;
+
     const twoRemInPixels = remInPixels(BombContainer.bombRadius);
     //browser window limits
     const { x, y } = BombContainer.getContainerLimitedCoordinates(
@@ -93,17 +102,17 @@ class BombContainer extends React.Component {
       document.body,
     );
 
+    setNewPosition(id, x, y);
+
     this.setState(() => ({
       dragState: dragStateOptions.INACTIVE,
     }));
-
-    const { id, setNewPosition } = this.props;
-    setNewPosition(id, x, y);
 
     if (this.shadow) {
       document.body.removeChild(this.shadow);
       this.shadow = null;
     }
+    event.stopPropagation();
   };
 
   updateShadow = timer => {

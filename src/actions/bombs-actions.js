@@ -1,4 +1,5 @@
-import { colors, healthPoints } from 'components/bomb';
+import { healthPoints } from 'components/bomb';
+import { colors } from 'src/utils';
 import { randomBetween } from 'src/utils';
 import uuidv4 from 'uuid/v4';
 

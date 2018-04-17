@@ -14,3 +14,31 @@ export const calculateNextInterval = x => {
     -121.1693 + (5000.018 + 121.1693) / (1 + Math.pow(x / 6.225041, 0.6608268))
   );
 };
+
+export const randomScrambler = array => {
+  let ar = [...array];
+  let scrambled = [];
+  let last;
+
+  for (let loops = ar.length; loops > 1; --loops) {
+    last = ar[parseInt(randomBetween(0, loops))];
+    scrambled.push(last);
+
+    ar = ar.filter(item => item !== last);
+  }
+  scrambled.push(ar[0]);
+
+  return scrambled;
+};
+
+export const colors = {
+  red: 'rgb(209, 49, 53)',
+  green: 'rgb(60, 141, 64)',
+  blue: 'rgb(34, 120, 207)',
+};
+
+export const colorShades = {
+  red: 'rgb(239, 79, 83)',
+  green: 'rgb(90, 171, 94)',
+  blue: 'rgb(64, 150, 237)',
+};

@@ -4,12 +4,13 @@ import { connect } from 'react-redux';
 
 import BombContainer from 'containers/bomb-container';
 import { addRandomBombBetween } from 'actions/bombs-actions';
-import { calculateNextInterval } from 'src/utils';
+import { calculateNextInterval, remInPixels } from 'src/utils';
 
 class BombSpawner extends React.Component {
   static propTypes = {
     addRandomBombBetween: PropTypes.func.isRequired,
     numberOfBombsToSpawn: PropTypes.number.isRequired,
+    children: PropTypes.node.isRequired,
     bombs: PropTypes.array.isRequired,
   };
 
@@ -25,12 +26,14 @@ class BombSpawner extends React.Component {
       return;
     }
 
-    addRandomBombBetween(
-      0,
-      document.body.clientWidth,
-      0,
-      document.body.clientHeight,
-    );
+    let { left, top, right, bottom } = this.bombField.getBoundingClientRect();
+    const bombRadiusInPixels = remInPixels(BombContainer.bombRadius);
+    left += bombRadiusInPixels;
+    right -= bombRadiusInPixels;
+    top += bombRadiusInPixels;
+    bottom -= bombRadiusInPixels;
+    addRandomBombBetween(left, right, top, bottom);
+
     this.setState(prevState => ({
       numberOfBombsDeployed: prevState.numberOfBombsDeployed + 1,
     }));
@@ -44,23 +47,29 @@ class BombSpawner extends React.Component {
   }
 
   render() {
-    const { bombs } = this.props;
+    const { bombs, children } = this.props;
     if (!bombs) {
       return null;
     }
 
     return (
       <React.Fragment>
-        {bombs.map(bomb => (
-          <BombContainer
-            key={bomb.id}
-            id={bomb.id}
-            x_pos={bomb.x_pos}
-            y_pos={bomb.y_pos}
-            timer={bomb.timer}
-            color={bomb.color}
-          />
-        ))}
+        <div
+          style={{ flexGrow: 1, width: '100%', padding: '10px' }}
+          ref={ref => (this.bombField = ref)}
+        >
+          {bombs.map(bomb => (
+            <BombContainer
+              key={bomb.id}
+              id={bomb.id}
+              x_pos={bomb.x_pos}
+              y_pos={bomb.y_pos}
+              timer={bomb.timer}
+              color={bomb.color}
+            />
+          ))}
+        </div>
+        {children}
       </React.Fragment>
     );
   }
