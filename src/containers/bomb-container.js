@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import Bomb from 'components/bomb';
-import { remInPixels } from 'src/utils';
+import { remInPixels, isFirefox } from 'src/utils';
 import {
   decreaseBombTimer,
   updatePosition,
@@ -65,8 +65,9 @@ class BombContainer extends React.Component {
     document.body.appendChild(this.shadow);
 
     event.stopPropagation();
-    event.dataTransfer.effectAllowed = 'copyMove';
-    event.dataTransfer.setData('Text', id);
+    event.dataTransfer.setData('text/plain', id);
+
+    return false;
   };
 
   onDragHandler = event => {
@@ -82,11 +83,20 @@ class BombContainer extends React.Component {
       document.body,
     );
 
+    // hack for lack of mouse coordinates support
+    // on firefox dragend event
+    if (isFirefox) {
+      this.eventClientX = event.clientX;
+      this.eventClientY = event.clientY;
+    }
+
     if (this.shadow) {
       this.shadow.style.top = `calc(${y}px - ${BombContainer.bombRadius}rem)`;
       this.shadow.style.left = `calc(${x}px - ${BombContainer.bombRadius}rem)`;
     }
+    event.preventDefault();
     event.stopPropagation();
+    return false;
   };
 
   onDragEndHandler = event => {
@@ -95,8 +105,8 @@ class BombContainer extends React.Component {
     const twoRemInPixels = remInPixels(BombContainer.bombRadius);
     //browser window limits
     const { x, y } = BombContainer.getContainerLimitedCoordinates(
-      event.clientX,
-      event.clientY,
+      isFirefox ? this.eventClientX : event.clientX,
+      isFirefox ? this.eventClientY : event.clientY,
       twoRemInPixels,
       twoRemInPixels,
       document.body,
@@ -112,7 +122,9 @@ class BombContainer extends React.Component {
       document.body.removeChild(this.shadow);
       this.shadow = null;
     }
+    event.preventDefault();
     event.stopPropagation();
+    return false;
   };
 
   updateShadow = timer => {
@@ -162,6 +174,15 @@ class BombContainer extends React.Component {
       this.decreaseTimerTimeoutCallback,
       1000,
     );
+
+    // hack for firefox lack of mouse coordinates on drag event
+    if (isFirefox) {
+      window.document.body.addEventListener(
+        'dragover',
+        this.onDragHandler,
+        false,
+      );
+    }
   }
 
   render() {
@@ -186,7 +207,7 @@ class BombContainer extends React.Component {
         timer={timer}
         color={color}
         dragState={dragState}
-        onDrag={this.onDragHandler}
+        onDrag={isFirefox ? null : this.onDragHandler}
         onDragStart={this.onDragStartHandler}
         onDragEnd={this.onDragEndHandler}
       />

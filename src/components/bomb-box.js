@@ -61,18 +61,22 @@ BombBox.defaultProps = {
   onDrop: e => {
     e.stopPropagation();
     e.preventDefault();
+    return false;
   },
   onDragOver: e => {
     e.stopPropagation();
     e.preventDefault();
+    return false;
   },
   onDragEnter: e => {
     e.stopPropagation();
     e.preventDefault();
+    return false;
   },
   onDragLeave: e => {
     e.stopPropagation();
     e.preventDefault();
+    return false;
   },
 };
 

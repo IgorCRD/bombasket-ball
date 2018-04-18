@@ -31,6 +31,9 @@ export const randomScrambler = array => {
   return scrambled;
 };
 
+export const isFirefox =
+  navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+
 export const colors = {
   red: 'rgb(209, 49, 53)',
   green: 'rgb(60, 141, 64)',

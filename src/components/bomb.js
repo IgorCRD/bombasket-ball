@@ -76,7 +76,7 @@ Bomb.propTypes = {
   radius: PropTypes.number.isRequired,
   timer: PropTypes.number.isRequired,
   color: PropTypes.string.isRequired,
-  onDrag: PropTypes.func.isRequired,
+  onDrag: PropTypes.func,
   onDragStart: PropTypes.func.isRequired,
   onDragEnd: PropTypes.func.isRequired,
   dragState: PropTypes.string.isRequired,

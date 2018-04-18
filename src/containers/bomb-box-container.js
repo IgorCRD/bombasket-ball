@@ -15,27 +15,38 @@ class BombBoxContainer extends React.Component {
   };
 
   onDropCallback = event => {
+    event.stopPropagation();
+    event.preventDefault();
+
     //eslint-disable-next-line
-    console.log(event.dataTransfer.getData('Text'));
+    console.log(event.dataTransfer.getData('text/plain'));
     this.setState(() => ({
       over: false,
     }));
+
+    return false;
   };
 
   onDragEnterCallback = event => {
     event.stopPropagation();
     event.preventDefault();
+
     this.setState(() => ({
       over: true,
     }));
+
+    return false;
   };
 
   onDragLeaveCallback = event => {
     event.stopPropagation();
     event.preventDefault();
+
     this.setState(() => ({
       over: false,
     }));
+
+    return false;
   };
 
   render() {
