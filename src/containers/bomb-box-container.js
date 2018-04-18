@@ -1,13 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import BombBox from 'components/bomb-box';
+import { increaseScore, decreaseScore } from 'actions/game-actions';
+import { zeroBombTimer } from 'actions/bombs-actions';
 
 class BombBoxContainer extends React.Component {
   static propTypes = {
     color: PropTypes.string.isRequired,
     colorShade: PropTypes.string.isRequired,
     order: PropTypes.number.isRequired,
+    bombs: PropTypes.object.isRequired,
+    decreaseScore: PropTypes.func.isRequired,
+    increaseScore: PropTypes.func.isRequired,
+    zeroBombTimer: PropTypes.func.isRequired,
   };
 
   state = {
@@ -18,8 +25,25 @@ class BombBoxContainer extends React.Component {
     event.stopPropagation();
     event.preventDefault();
 
-    //eslint-disable-next-line
-    console.log(event.dataTransfer.getData('text/plain'));
+    const {
+      bombs,
+      color,
+      increaseScore,
+      decreaseScore,
+      zeroBombTimer,
+    } = this.props;
+    const droppedBombId = event.dataTransfer.getData('text/plain');
+    const droppedBomb = bombs[droppedBombId];
+
+    if (droppedBomb) {
+      if (droppedBomb.color === color) {
+        increaseScore();
+      } else {
+        decreaseScore();
+      }
+      zeroBombTimer(droppedBomb.id);
+    }
+
     this.setState(() => ({
       over: false,
     }));
@@ -66,4 +90,14 @@ class BombBoxContainer extends React.Component {
   }
 }
 
-export default BombBoxContainer;
+const mapStateToProps = ({ bombs }) => {
+  return {
+    bombs: bombs.bombs,
+  };
+};
+
+export default connect(mapStateToProps, {
+  increaseScore,
+  decreaseScore,
+  zeroBombTimer,
+})(BombBoxContainer);

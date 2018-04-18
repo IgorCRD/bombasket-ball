@@ -182,6 +182,14 @@ class BombContainer extends React.Component {
         this.onDragHandler,
         false,
       );
+      window.document.body.addEventListener(
+        'drop',
+        event => {
+          event.preventDefault();
+          return false;
+        },
+        false,
+      );
     }
   }
 

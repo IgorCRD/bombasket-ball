@@ -7,6 +7,7 @@ export const ADD_BOMB = 'ADD_BOMB';
 export const DECREASE_BOMB_TIMER = 'DECREASE_BOMB_TIMER';
 export const UPDATE_POSITION = 'UPDATE_POSITION';
 export const DELETE_BOMB = 'DELETE_BOMB';
+export const ZERO_BOMB_TIMER = 'ZERO_BOMB_TIMER';
 
 const addBombAction = (x_pos, y_pos, timer, color, id) => ({
   type: ADD_BOMB,
@@ -36,6 +37,13 @@ export const updatePosition = (id, x, y) => {
 export const deleteBomb = id => {
   return {
     type: DELETE_BOMB,
+    id,
+  };
+};
+
+export const zeroBombTimer = id => {
+  return {
+    type: ZERO_BOMB_TIMER,
     id,
   };
 };

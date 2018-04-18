@@ -3,6 +3,7 @@ import {
   DECREASE_BOMB_TIMER,
   UPDATE_POSITION,
   DELETE_BOMB,
+  ZERO_BOMB_TIMER,
 } from 'actions/bombs-actions';
 
 const insertBomb = (bombsMap, newBomb) => {
@@ -15,13 +16,18 @@ const insertBomb = (bombsMap, newBomb) => {
 
 const decreaseBombTimer = (bombs, id) => {
   const bombToDecreaseTimer = bombs[id];
+
   const bombsResult = {
     ...bombs,
   };
-  bombsResult[id] = {
-    ...bombToDecreaseTimer,
-    timer: bombToDecreaseTimer.timer - 1,
-  };
+
+  if (bombToDecreaseTimer) {
+    bombsResult[id] = {
+      ...bombToDecreaseTimer,
+      timer: bombToDecreaseTimer.timer - 1,
+    };
+  }
+
   return bombsResult;
 };
 
@@ -36,6 +42,22 @@ const updateBombPosition = (bombs, id, x, y) => {
     ...bombs,
   };
   bombsResult[id] = { ...bombToUpdate, x_pos: x, y_pos: y };
+  return bombsResult;
+};
+
+const zeroBombTimer = (bombs, id) => {
+  const bombToZeroTimer = bombs[id];
+
+  const bombsResult = {
+    ...bombs,
+  };
+
+  if (bombToZeroTimer) {
+    bombsResult[id] = {
+      ...bombToZeroTimer,
+      timer: 0,
+    };
+  }
   return bombsResult;
 };
 
@@ -68,6 +90,11 @@ const bombsReducer = (state = initialState, action) => {
       return {
         ...state,
         bombs: deleteBomb(state.bombs, action.id),
+      };
+    case ZERO_BOMB_TIMER:
+      return {
+        ...state,
+        bombs: zeroBombTimer(state.bombs, action.id),
       };
     default:
       return state;
