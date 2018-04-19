@@ -1,4 +1,7 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
+const ClosureCompilerPlugin = require('webpack-closure-compiler');
 const path = require('path');
 
 module.exports = {
@@ -69,11 +72,31 @@ module.exports = {
     compress: true,
     disableHostCheck: true,
   },
+  optimization: {
+    minimize: false, // disabling UglifyJS
+  },
   plugins: [
+    new CleanWebpackPlugin(['dist']),
     new HtmlWebPackPlugin({
       favicon: './assets/images/favicon.ico',
       template: './src/index.html',
       filename: './index.html',
+    }),
+    // Using closure compiler plugin instead of UglifyJS
+    new ClosureCompilerPlugin({
+      compiler: {
+        language_in: 'ECMASCRIPT6',
+        language_out: 'ECMASCRIPT5',
+        compilation_level: 'SIMPLE',
+      },
+      concurrency: 3,
+    }),
+    new CompressionPlugin({
+      asset: '[path].gz[query]',
+      algorithm: 'gzip',
+      test: /\.js$|\.css$|\.html$/,
+      threshold: 10240,
+      minRatio: 0.8,
     }),
   ],
 };

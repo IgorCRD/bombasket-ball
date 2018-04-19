@@ -1,1 +1,1 @@
-export const corsOptions = undefined;
+module.exports = { corsOptions: undefined };

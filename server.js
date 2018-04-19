@@ -8,6 +8,14 @@ const port = process.env.PORT || 8080;
 
 const distDir = path.join(__dirname, 'dist');
 
+app.get('*.js', (req, res, next) => {
+  if (req.get('Accept-Encoding').indexOf('gzip') !== -1) {
+    req.url = req.url + '.gz';
+    res.set('Content-Encoding', 'gzip');
+  }
+  next();
+});
+
 app.use(cors(servingConfig.corsOptions));
 
 app.use(Express.static(distDir));
