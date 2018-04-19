@@ -9,7 +9,12 @@ const port = process.env.PORT || 8080;
 const distDir = path.join(__dirname, 'dist');
 
 app.get('*.js', (req, res, next) => {
-  if (req.get('Accept-Encoding').indexOf('gzip') !== -1) {
+  if (
+    req.get('Accept-Encoding').indexOf('gzip') !== -1 &&
+    req.get('User-Agent').indexOf('Firefox/') === -1
+  ) {
+    //eslint-disable-next-line
+    console.log(req.get('User-Agent'));
     req.url = req.url + '.gz';
     res.set('Content-Encoding', 'gzip');
   }
