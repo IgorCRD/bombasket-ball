@@ -167,6 +167,9 @@ class BombContainer extends React.Component {
       decreaseScore();
       deleteBomb(id);
     }
+    if (timer === 0) {
+      deleteBomb(id);
+    }
   };
 
   componentDidMount() {

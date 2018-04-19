@@ -5,6 +5,7 @@ import {
   DELETE_BOMB,
   ZERO_BOMB_TIMER,
 } from 'actions/bombs-actions';
+import { RESTART } from 'actions/game-actions';
 
 const insertBomb = (bombsMap, newBomb) => {
   const resBombsMap = { ...bombsMap };
@@ -96,6 +97,8 @@ const bombsReducer = (state = initialState, action) => {
         ...state,
         bombs: zeroBombTimer(state.bombs, action.id),
       };
+    case RESTART:
+      return initialState;
     default:
       return state;
   }

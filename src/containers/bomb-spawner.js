@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import BombContainer from 'containers/bomb-container';
 import { addRandomBombBetween } from 'actions/bombs-actions';
+import { restartGame, addBombCounter } from 'actions/game-actions';
 import { calculateNextInterval, remInPixels } from 'src/utils';
 
 class BombSpawner extends React.Component {
@@ -12,15 +13,20 @@ class BombSpawner extends React.Component {
     numberOfBombsToSpawn: PropTypes.number.isRequired,
     children: PropTypes.node.isRequired,
     bombs: PropTypes.array.isRequired,
-  };
-
-  state = {
-    numberOfBombsDeployed: 0,
+    numberOfBombsDeployed: PropTypes.number.isRequired,
+    restartGame: PropTypes.func.isRequired,
+    addBombCounter: PropTypes.func.isRequired,
+    score: PropTypes.number.isRequired,
+    numberOfBombsActive: PropTypes.number.isRequired,
   };
 
   addBombTimeoutCallback = () => {
-    const { numberOfBombsToSpawn, addRandomBombBetween } = this.props;
-    const { numberOfBombsDeployed } = this.state;
+    const {
+      numberOfBombsToSpawn,
+      addRandomBombBetween,
+      numberOfBombsDeployed,
+      addBombCounter,
+    } = this.props;
 
     if (numberOfBombsDeployed >= numberOfBombsToSpawn) {
       return;
@@ -32,15 +38,46 @@ class BombSpawner extends React.Component {
     right -= bombRadiusInPixels;
     top += bombRadiusInPixels;
     bottom -= bombRadiusInPixels;
-    addRandomBombBetween(left, right, top, bottom);
 
-    this.setState(prevState => ({
-      numberOfBombsDeployed: prevState.numberOfBombsDeployed + 1,
-    }));
+    addRandomBombBetween(left, right, top, bottom);
+    addBombCounter();
 
     const time = calculateNextInterval(numberOfBombsDeployed);
     this.addBombTimeout = setTimeout(this.addBombTimeoutCallback, time);
   };
+
+  shouldComponentUpdate(nextProps) {
+    return (
+      nextProps.numberOfBombsActive !== this.props.numberOfBombsActive ||
+      nextProps.numberOfBombsDeployed !== this.props.numberOfBombsDeployed
+    );
+  }
+
+  componentDidUpdate() {
+    const {
+      numberOfBombsDeployed,
+      numberOfBombsActive,
+      restartGame,
+      score,
+    } = this.props;
+    if (numberOfBombsActive === 0 && numberOfBombsDeployed >= 120) {
+      setTimeout(() => {
+        /* A race condition was causing the alert to block the rendering
+        * causing the game to finish while there was still one or two bombs on
+        * the field.
+        * setTimeout prevents it by adding the finishing routine to the event loop
+        * allowing the rerender to finish its job    
+        */
+        alert(
+          `Game finished you scored: ${score}!!!! Click ok to restart the game`,
+        );
+        restartGame();
+      }, 2000);
+    }
+    if (numberOfBombsActive === 0 && numberOfBombsDeployed === 0) {
+      this.addBombTimeout = setTimeout(this.addBombTimeoutCallback, 0);
+    }
+  }
 
   componentDidMount() {
     this.addBombTimeout = setTimeout(this.addBombTimeoutCallback, 0);
@@ -75,8 +112,15 @@ class BombSpawner extends React.Component {
   }
 }
 
-const mapStateToProps = ({ bombs }) => ({
+const mapStateToProps = ({ bombs, game }) => ({
   bombs: Object.values(bombs.bombs),
+  numberOfBombsActive: Object.keys(bombs.bombs).length,
+  numberOfBombsDeployed: game.numberOfBombsDeployed,
+  score: game.gameScore,
 });
 
-export default connect(mapStateToProps, { addRandomBombBetween })(BombSpawner);
+export default connect(mapStateToProps, {
+  addRandomBombBetween,
+  restartGame,
+  addBombCounter,
+})(BombSpawner);
